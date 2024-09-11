@@ -5,3 +5,12 @@
 
 # 忽略日志文件
 *.log
+.bender/
+logs/
+verdiLog/
+work-vcs.daidir/
+work-vcs.vdb/
+novas.conf
+novas.rc
+wave.fsdb
+work-vcs

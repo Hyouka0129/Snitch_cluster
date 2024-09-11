@@ -1,6 +1,0 @@
-import_DPI tb_memory_read tb_memory_regbus
-import_DPI tb_memory_write tb_memory_regbus
-import_DPI tb_memory_read tb_memory_regbus_0000
-import_DPI tb_memory_write tb_memory_regbus_0000
-DirectC SdisableFork 
-DirectC StoreForloopIdxIntoSPF 
