@@ -1,0 +1,4 @@
+DPI_STUB_OBJS += ./../work-vcs.daidir/vc_hdrs.o
+./../work-vcs.daidir/vc_hdrs.o: ./../work-vcs.daidir/vc_hdrs.c
+	@$(CC) -I/home/hyouka/tools/synopsys/vcs-mx/O-2018.09-SP2/include  -pipe -fPIC    -I/home/hyouka/tools/synopsys/vcs-mx/O-2018.09-SP2/include  -fPIC -c -o ./../work-vcs.daidir/vc_hdrs.o ./../work-vcs.daidir/vc_hdrs.c
+	@strip -g ./../work-vcs.daidir/vc_hdrs.o
