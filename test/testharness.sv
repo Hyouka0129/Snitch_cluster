@@ -4,23 +4,43 @@
 
 `include "axi/typedef.svh"
 
-module testharness import snitch_cluster_pkg::*; (
+module testharness import snitch_cluster_pkg::*; #(
+  parameter NarrowAXIAddrWidth  = 48,
+  parameter NarrowAXIDataWidth  = 64,
+  parameter NarrowAXIIDWidth    = 4,
+  parameter NarrowAXIUserWidth  = 5,
+  parameter WideAXIAddrWidth    = 48,
+  parameter WideAXIDataWidth    = 512,
+  parameter WideAXIIDWidth      = 3,
+  parameter WideAXIUserWidth    = 1
+)(
   input  logic        clk_i,
   input  logic        rst_ni
 );
-  /*import "DPI-C" function void clint_tick(
-    output byte msip[]
-  );
-*/
-  narrow_in_req_t narrow_in_req;
-  narrow_in_resp_t narrow_in_resp;
-  narrow_out_req_t narrow_out_req;
+
+  narrow_in_req_t   narrow_in_req;
+  narrow_in_resp_t  narrow_in_resp;
+  narrow_out_req_t  narrow_out_req;
   narrow_out_resp_t narrow_out_resp;
-  wide_out_req_t wide_out_req;
-  wide_out_resp_t wide_out_resp;
-  wide_in_req_t wide_in_req;
-  wide_in_resp_t wide_in_resp;
+  wide_out_req_t    wide_out_req;
+  wide_out_resp_t   wide_out_resp;
+  wide_in_req_t     wide_in_req;
+  wide_in_resp_t    wide_in_resp;
   logic [snitch_cluster_pkg::NrCores-1:0] msip;
+  
+  AXI_BUS #(
+    .AXI_ADDR_WIDTH ( NarrowAXIAddrWidth  ),
+    .AXI_DATA_WIDTH ( NarrowAXIDataWidth  ),
+    .AXI_ID_WIDTH   ( NarrowAXIIDWidth    ),
+    .AXI_USER_WIDTH ( NarrowAXIUserWidth  )
+  ) narrow_axi();
+
+  AXI_BUS #(
+    .AXI_ADDR_WIDTH ( WideAXIAddrWidth    ),
+    .AXI_DATA_WIDTH ( WideAXIDataWidth    ),
+    .AXI_ID_WIDTH   ( WideAXIIDWidth      ),
+    .AXI_USER_WIDTH ( WideAXIUserWidth    )
+  ) wide_axi(); 
 
   snitch_cluster_wrapper i_snitch_cluster (
     .clk_i,
@@ -48,47 +68,87 @@ module testharness import snitch_cluster_pkg::*; (
   assign wide_in_req = '0;
 
   // Narrow port into simulation memory.
-  tb_memory_axi #(
-    .AxiAddrWidth (AddrWidth),
-    .AxiDataWidth (NarrowDataWidth),
-    .AxiIdWidth (NarrowIdWidthOut),
-    .AxiUserWidth (NarrowUserWidth),
-    .req_t (narrow_out_req_t),
-    .rsp_t (narrow_out_resp_t)
-  ) i_mem (
-    .clk_i,
-    .rst_ni,
-    .req_i (narrow_out_req),
-    .rsp_o (narrow_out_resp)
+  logic narrow_req;
+  logic narrow_we;
+  logic [NarrowAXIAddrWidth-1:0]    narrow_addr;
+  logic [NarrowAXIDataWidth-1:0]    narrow_wdata;
+  logic [NarrowAXIDataWidth-1:0]    narrow_rdata;
+  logic [NarrowAXIDataWidth/8-1:0]  narrow_be;
+  axi2mem #(
+    .AXI_ID_WIDTH   ( NarrowAXIIDWidth    ),
+    .AXI_ADDR_WIDTH ( NarrowAXIAddrWidth  ),
+    .AXI_DATA_WIDTH ( NarrowAXIDataWidth  ),
+    .AXI_USER_WIDTH ( NarrowAXIUserWidth  )
+  ) i_narrow_axi2mem (
+      .clk_i  ( clk_i         ),
+      .rst_ni ( rst_ni        ),
+      .slave  ( narrow_axi    ),
+      .req_o  ( narrow_req    ),
+      .we_o   ( narrow_we     ),
+      .addr_o ( narrow_addr   ),
+      .be_o   ( narrow_be     ),
+      .data_o ( narrow_wdata  ),
+      .data_i ( narrow_rdata  )
   );
+  
+	sram #(
+		.DATA_WIDTH ( NarrowAXIDataWidth  ),
+		.USER_EN	  ( 0			              ),
+		.SIM_INIT	  ( "zeros"	            ),
+		.NUM_WORDS	( 16384	              )
+  ) i_narrow_sram (
+		.clk_i		( clk_i 		      ),
+		.rst_ni		( rst_ni          ),
+		.req_i		( narrow_req		  ),
+		.we_i		  ( narrow_we		    ),
+		.addr_i		( narrow_addr     ),
+		.wuser_i	( '0		          ),
+		.wdata_i	( narrow_wdata		),
+		.be_i		  ( narrow_be		    ),
+		.ruser_o	( 		            ),
+		.rdata_o	( narrow_rdata		)
+	);
 
   // Wide port into simulation memory.
-  tb_memory_axi #(
-    .AxiAddrWidth (AddrWidth),
-    .AxiDataWidth (WideDataWidth),
-    .AxiIdWidth (WideIdWidthOut),
-    .AxiUserWidth (WideUserWidth),
-    .req_t (wide_out_req_t),
-    .rsp_t (wide_out_resp_t)
-  ) i_dma (
-    .clk_i,
-    .rst_ni,
-    .req_i (wide_out_req),
-    .rsp_o (wide_out_resp)
+  logic wide_req;
+  logic wide_we;
+  logic [WideAXIAddrWidth-1:0]    wide_addr;
+  logic [WideAXIDataWidth-1:0]    wide_wdata;
+  logic [WideAXIDataWidth-1:0]    wide_rdata;
+  logic [WideAXIDataWidth/8-1:0]  wide_be;
+
+  axi2mem #(
+    .AXI_ID_WIDTH   ( WideAXIIDWidth    ),
+    .AXI_ADDR_WIDTH ( WideAXIAddrWidth  ),
+    .AXI_DATA_WIDTH ( WideAXIDataWidth  ),
+    .AXI_USER_WIDTH ( WideAXIUserWidth  )
+  ) i_wide_axi2mem (
+      .clk_i  ( clk_i         ),
+      .rst_ni ( rst_ni        ),
+      .slave  ( wide_axi      ),
+      .req_o  ( wide_req      ),
+      .we_o   ( wide_we       ),
+      .addr_o ( wide_addr     ),
+      .be_o   ( wide_be       ),
+      .data_o ( wide_wdata    ),
+      .data_i ( wide_rdata    )
   );
 
-  // CLINT
-  // verilog_lint: waive-start always-ff-non-blocking
-  /*localparam int NumCores = snitch_cluster_pkg::NrCores;
-  always_ff @(posedge clk_i) begin
-    automatic byte msip_ret[NumCores];
-    if (rst_ni) begin
-      clint_tick(msip_ret);
-      for (int i = 0; i < NumCores; i++) begin
-        msip[i] = msip_ret[i];
-      end
-    end
-  end
-  // verilog_lint: waive-stop always-ff-non-blocking
-*/
+  sram #(
+    .DATA_WIDTH ( WideAXIDataWidth    ),
+    .USER_EN	  ( 0			              ),
+    .SIM_INIT	  ( "zeros"	            ),
+    .NUM_WORDS	( 16384	              )
+  ) i_wide_sram (
+    .clk_i		( clk_i 	      ),
+    .rst_ni		( rst_ni        ),
+    .req_i		( wide_req		  ),
+    .we_i		  ( wide_we		    ),
+    .addr_i		( wide_addr     ),
+    .wuser_i	( '0		        ),
+    .wdata_i	( wide_wdata		),
+    .be_i		  ( wide_be		    ),
+    .ruser_o	( 		          ),
+    .rdata_o	( wide_rdata		)
+  );
 endmodule

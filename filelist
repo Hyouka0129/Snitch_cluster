@@ -9,7 +9,6 @@
 /home/hyouka/project/snitch/.bender/git/checkouts/common_verification-34173c1a42056248/src/rand_synch_driver.sv
 /home/hyouka/project/snitch/.bender/git/checkouts/common_verification-34173c1a42056248/src/rand_stream_slv.sv
 /home/hyouka/project/snitch/.bender/git/checkouts/common_verification-34173c1a42056248/test/tb_clk_rst_gen.sv
-/home/hyouka/project/snitch/.bender/git/checkouts/tech_cells_generic-f06a8e285ea4a145/src/rtl/tc_sram.sv
 /home/hyouka/project/snitch/.bender/git/checkouts/tech_cells_generic-f06a8e285ea4a145/src/rtl/tc_sram_impl.sv
 /home/hyouka/project/snitch/.bender/git/checkouts/tech_cells_generic-f06a8e285ea4a145/src/rtl/tc_clk.sv
 /home/hyouka/project/snitch/.bender/git/checkouts/tech_cells_generic-f06a8e285ea4a145/src/deprecated/cluster_pwr_cells.sv
@@ -102,7 +101,6 @@
 /home/hyouka/project/snitch/.bender/git/checkouts/common_cells-972044434126250f/src/stream_arbiter.sv
 /home/hyouka/project/snitch/.bender/git/checkouts/common_cells-972044434126250f/src/stream_omega_net.sv
 /home/hyouka/project/snitch/.bender/git/checkouts/common_cells-972044434126250f/src/mem_to_banks.sv
-/home/hyouka/project/snitch/.bender/git/checkouts/common_cells-972044434126250f/src/deprecated/sram.sv
 /home/hyouka/project/snitch/.bender/git/checkouts/common_cells-972044434126250f/src/deprecated/clock_divider_counter.sv
 /home/hyouka/project/snitch/.bender/git/checkouts/common_cells-972044434126250f/src/deprecated/clk_div.sv
 /home/hyouka/project/snitch/.bender/git/checkouts/common_cells-972044434126250f/src/deprecated/find_first_one.sv
@@ -426,8 +424,12 @@
 /home/hyouka/project/snitch/hw/snitch_cluster/src/snitch_hive.sv
 /home/hyouka/project/snitch/hw/snitch_cluster/src/snitch_cluster.sv
 /home/hyouka/project/snitch/hw/snitch_cluster/test/snitch_tcdm_interconnect_tb.sv
-/home/hyouka/project/snitch/snitch_cluster_wrapper.sv
+/home/hyouka/project/snitch/hw/snitch_cluster/snitch_cluster_wrapper.sv
 /home/hyouka/project/snitch/test/tb_memory_axi.sv
 /home/hyouka/project/snitch/test/tb_memory_regbus.sv
-/home/hyouka/project/snitch/testharness.sv
-/home/hyouka/project/snitch/top_tb.sv
+/home/hyouka/project/snitch/util/axi2mem.sv
+/home/hyouka/project/snitch/util/sram.sv
+/home/hyouka/project/snitch/util/tc_sram.sv
+/home/hyouka/project/snitch/util/tc_sram_wrapper.sv
+/home/hyouka/project/snitch/test/testharness.sv
+/home/hyouka/project/snitch/test/top_tb.sv
