@@ -61,7 +61,7 @@ always_comb begin : p_align
     ruser_o = ruser_aligned[USER_WIDTH-1:0];
 end
 
-  for (genvar k = 0; k<(DATA_WIDTH+63)/64; k++) begin : gen_cut
+  for (genvar k = 0; k<1; k++) begin : gen_cut
       // unused byte-enable segments (8bits) are culled by the tool
       tc_sram_wrapper #(
         .NumWords(NUM_WORDS),           // Number of Words in data array

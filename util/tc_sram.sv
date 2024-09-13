@@ -90,10 +90,7 @@ module tc_sram #(
   data_t init_val[NumWords-1:0];
   initial begin : proc_sram_init
 	if (SimInit == "file")
-		if(DataWidth == 32)
-			$readmemh("init_mem_32bit.hex", init_val);
-		else
-			$readmemh("init_mem_64bit.hex", init_val);
+		$readmemh("/home/hyouka/project/snitch/util/init_mem.hex", init_val);
 	else
 		for (int unsigned i = 0; i < NumWords; i++) begin
 		  case (SimInit)

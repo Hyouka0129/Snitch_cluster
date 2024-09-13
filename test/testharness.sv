@@ -62,7 +62,10 @@ module testharness import snitch_cluster_pkg::*; #(
     .wide_in_req_i (wide_in_req),
     .wide_in_resp_o (wide_in_resp)
   );
-
+  `AXI_ASSIGN_FROM_REQ(narrow_axi, narrow_out_req)
+  `AXI_ASSIGN_TO_RESP(narrow_out_resp, narrow_axi)
+  `AXI_ASSIGN_FROM_REQ(wide_axi, wide_out_req)
+  `AXI_ASSIGN_TO_RESP(wide_out_resp, wide_axi)
   // Tie-off unused input ports.
   assign narrow_in_req = '0;
   assign wide_in_req = '0;
@@ -74,6 +77,7 @@ module testharness import snitch_cluster_pkg::*; #(
   logic [NarrowAXIDataWidth-1:0]    narrow_wdata;
   logic [NarrowAXIDataWidth-1:0]    narrow_rdata;
   logic [NarrowAXIDataWidth/8-1:0]  narrow_be;
+  logic [NarrowAXIUserWidth-1:0]    narrow_user;
   axi2mem #(
     .AXI_ID_WIDTH   ( NarrowAXIIDWidth    ),
     .AXI_ADDR_WIDTH ( NarrowAXIAddrWidth  ),
@@ -87,7 +91,9 @@ module testharness import snitch_cluster_pkg::*; #(
       .we_o   ( narrow_we     ),
       .addr_o ( narrow_addr   ),
       .be_o   ( narrow_be     ),
+      .user_o ( narrow_user   ),
       .data_o ( narrow_wdata  ),
+      .user_i ( '0            ),
       .data_i ( narrow_rdata  )
   );
   
@@ -95,18 +101,18 @@ module testharness import snitch_cluster_pkg::*; #(
 		.DATA_WIDTH ( NarrowAXIDataWidth  ),
 		.USER_EN	  ( 0			              ),
 		.SIM_INIT	  ( "zeros"	            ),
-		.NUM_WORDS	( 16384	              )
+		.NUM_WORDS	( 1024	              )
   ) i_narrow_sram (
-		.clk_i		( clk_i 		      ),
-		.rst_ni		( rst_ni          ),
-		.req_i		( narrow_req		  ),
-		.we_i		  ( narrow_we		    ),
-		.addr_i		( narrow_addr     ),
-		.wuser_i	( '0		          ),
-		.wdata_i	( narrow_wdata		),
-		.be_i		  ( narrow_be		    ),
-		.ruser_o	( 		            ),
-		.rdata_o	( narrow_rdata		)
+		.clk_i		( clk_i 		        ),
+		.rst_ni		( rst_ni            ),
+		.req_i		( narrow_req		    ),
+		.we_i		  ( narrow_we		      ),
+		.addr_i		( narrow_addr[12:3] ),
+		.wuser_i	( '0		            ),
+		.wdata_i	( narrow_wdata		  ),
+		.be_i		  ( narrow_be		      ),
+		.ruser_o	( 		              ),
+		.rdata_o	( narrow_rdata	  	)
 	);
 
   // Wide port into simulation memory.
@@ -116,7 +122,7 @@ module testharness import snitch_cluster_pkg::*; #(
   logic [WideAXIDataWidth-1:0]    wide_wdata;
   logic [WideAXIDataWidth-1:0]    wide_rdata;
   logic [WideAXIDataWidth/8-1:0]  wide_be;
-
+  logic [WideAXIUserWidth-1:0]    wide_user;
   axi2mem #(
     .AXI_ID_WIDTH   ( WideAXIIDWidth    ),
     .AXI_ADDR_WIDTH ( WideAXIAddrWidth  ),
@@ -130,25 +136,27 @@ module testharness import snitch_cluster_pkg::*; #(
       .we_o   ( wide_we       ),
       .addr_o ( wide_addr     ),
       .be_o   ( wide_be       ),
+      .user_o ( wide_user     ),
       .data_o ( wide_wdata    ),
+      .user_i ( '0            ),
       .data_i ( wide_rdata    )
   );
 
   sram #(
     .DATA_WIDTH ( WideAXIDataWidth    ),
     .USER_EN	  ( 0			              ),
-    .SIM_INIT	  ( "zeros"	            ),
-    .NUM_WORDS	( 16384	              )
+    .SIM_INIT	  ( "file"	            ),
+    .NUM_WORDS	( 1024	              )
   ) i_wide_sram (
-    .clk_i		( clk_i 	      ),
-    .rst_ni		( rst_ni        ),
-    .req_i		( wide_req		  ),
-    .we_i		  ( wide_we		    ),
-    .addr_i		( wide_addr     ),
-    .wuser_i	( '0		        ),
-    .wdata_i	( wide_wdata		),
-    .be_i		  ( wide_be		    ),
-    .ruser_o	( 		          ),
-    .rdata_o	( wide_rdata		)
+    .clk_i		( clk_i 	        ),
+    .rst_ni		( rst_ni          ),
+    .req_i		( wide_req		    ),
+    .we_i		  ( wide_we		      ),
+    .addr_i		( wide_addr[15:6] ),
+    .wuser_i	( '0		          ),
+    .wdata_i	( wide_wdata		  ),
+    .be_i		  ( wide_be		      ),
+    .ruser_o	( 		            ),
+    .rdata_o	( wide_rdata	  	)
   );
 endmodule
