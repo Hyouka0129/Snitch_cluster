@@ -24,7 +24,7 @@ module top_tb;
     #10 rst_ni = 1;
 
     // Run simulation for 100 time units and finish
-    #1000 $finish;
+    #10000 $finish;
   end
 
   // Dump waveforms for debugging (if needed)

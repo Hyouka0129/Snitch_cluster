@@ -419,12 +419,12 @@
 /home/hyouka/project/snitch/hw/snitch_cluster/src/snitch_barrier.sv
 /home/hyouka/project/snitch/hw/snitch_cluster/src/snitch_fp_ss.sv
 /home/hyouka/project/snitch/hw/snitch_cluster/src/snitch_shared_muldiv.sv
+/home/hyouka/project/snitch/hw/snitch_cluster/snitch_cluster_wrapper.sv
 /home/hyouka/project/snitch/hw/snitch_cluster/src/snitch_cc.sv
 /home/hyouka/project/snitch/hw/snitch_cluster/src/snitch_clkdiv2.sv
 /home/hyouka/project/snitch/hw/snitch_cluster/src/snitch_hive.sv
 /home/hyouka/project/snitch/hw/snitch_cluster/src/snitch_cluster.sv
 /home/hyouka/project/snitch/hw/snitch_cluster/test/snitch_tcdm_interconnect_tb.sv
-/home/hyouka/project/snitch/hw/snitch_cluster/snitch_cluster_wrapper.sv
 /home/hyouka/project/snitch/test/tb_memory_axi.sv
 /home/hyouka/project/snitch/test/tb_memory_regbus.sv
 /home/hyouka/project/snitch/util/axi2mem.sv
